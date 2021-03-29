@@ -9,6 +9,33 @@ signal connected_ok()
 signal connected_fail()
 signal server_disconnected()
 
+var upnp = UPNP.new()
+var thread = Thread.new()
+
+signal port_opened(result)
+
+func open_port(port):
+	thread.start(self, "_thread_open_port", port)
+
+func _thread_open_port(port):
+	var res = upnp.discover()
+	if res != UPNP.UPNP_RESULT_SUCCESS:
+		emit_signal("port_opened", false)
+		return
+	var gateway = upnp.get_gateway()
+	res = gateway.add_port_mapping(port, 0, "MultiplayerTest", "UDP")
+#	print(res)
+	if res != UPNP.UPNP_RESULT_SUCCESS:
+		emit_signal("port_opened", false)
+		return
+	gateway.add_port_mapping(port, 0, "MultiplayerTest", "TCP")
+#	print(res)
+	if res != UPNP.UPNP_RESULT_SUCCESS:
+		emit_signal("port_opened", false)
+		return
+	emit_signal("port_opened", true)
+	thread.call_deferred("wait_to_finish")
+
 func _ready() -> void:
 	get_tree().connect("network_peer_connected", self, "_player_connected")
 	get_tree().connect("network_peer_disconnected", self, "_player_disconnected")

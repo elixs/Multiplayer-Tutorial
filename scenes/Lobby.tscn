@@ -30,7 +30,7 @@ anchor_bottom = 0.5
 margin_left = -125.0
 margin_top = -44.0
 margin_right = 125.0
-margin_bottom = 44.0
+margin_bottom = 62.0
 rect_min_size = Vector2( 250, 0 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -88,6 +88,13 @@ margin_right = 250.0
 margin_bottom = 24.0
 rect_min_size = Vector2( 60, 0 )
 text = "Join"
+
+[node name="Error" type="Label" parent="CanvasLayer/Panel/Connect"]
+modulate = Color( 1, 0, 1, 1 )
+margin_top = 92.0
+margin_right = 250.0
+margin_bottom = 106.0
+align = 1
 
 [node name="Waiting" type="VBoxContainer" parent="CanvasLayer/Panel"]
 visible = false

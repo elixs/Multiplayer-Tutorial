@@ -16,6 +16,8 @@ func _ready():
 	Game.connect("connected_fail", self, "_connected_fail")
 	Game.connect("server_disconnected", self, "_server_disconnected")
 	
+	Game.connect("port_opened", self, "_port_opened")
+	
 	# Set the player name according to the system username. Fallback to the path.
 	if OS.has_environment("USERNAME"):
 		name_label.text = OS.get_environment("USERNAME")
@@ -57,6 +59,8 @@ func _host_pressed():
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_server(PORT, MAX_CLIENTS)
 	get_tree().network_peer = peer
+	
+	Game.open_port(PORT)
 	
 	print("Server Created: %s:%s" % [$CanvasLayer/Panel/Connect/HBoxContainer2/IP.text, PORT])
 	
@@ -122,8 +126,6 @@ func _add_player():
 	_add_player_info(nid, info)
 	_add_player_ui(nid)
 
-
-
 func _add_player_info(id, info):
 	var nid = get_tree().get_network_unique_id()
 	Game.players[id] = info
@@ -133,10 +135,8 @@ func _add_player_info(id, info):
 	if (id != nid or nid == 1) and not Game.players[id].has("slot"):
 			Game.players[id]["slot"] = slot
 	
-	if nid == 1:
+	if nid == 1 and id != 1:
 		rpc_id(id, "_set_slot", slot)
-
-
 
 remote func _set_slot(slot):
 	var nid = get_tree().get_network_unique_id()
@@ -179,3 +179,9 @@ func _show_connect():
 func _clear_ui():
 	for child in players_container.get_children():
 		players_container.remove_child(child)
+
+func _port_opened(result):
+	print("_port_opened %s" % result)
+	if not result:
+		_show_connect()
+		$CanvasLayer/Panel/Connect/Error.text = "Port %d couldn't be opened!" % PORT
