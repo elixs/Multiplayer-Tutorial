@@ -32,7 +32,7 @@ func _physics_process(delta: float) -> void:
 	linear_vel = move_and_slide(linear_vel, Vector2.UP)
 	
 	if is_network_master():
-		rset("puppet_pos", position)
+		rset_unreliable("puppet_pos", position)
 	else:
 		position = lerp(position, puppet_pos, 0.5)
 		puppet_pos = position

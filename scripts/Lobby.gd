@@ -86,7 +86,7 @@ func _update_player_status(is_ready):
 
 sync func _player_is_ready(is_ready):
 	var nid = get_tree().get_rpc_sender_id()
-	_player_status[nid] = is_ready	
+	_player_status[nid] = is_ready
 	_player_is_ready_ui(nid, is_ready)
 	_check_players_ready()
 
